@@ -19,7 +19,7 @@ else
   if [[ $1 =~ ^[A-Za-z]{1,2}$ ]]
   then
     SYMBOL=$1
-    QUERY_RESULT=$($PSQL "SELECT _number, e.name, e.symbol, t.type, p.atomic_mass, p.melting_point_celsius, p.boiling_point_celsius FROM elements e JOIN properties p ON e.atomic_number = p.atomic_number JOIN types t ON p.type_id = t.type_id WHERE e.symbol = '$SYMBOL' OR e.symbol = INITCAP('$SYMBOL')")
+    QUERY_RESULT=$($PSQL "SELECT e.atomic_number, e.name, e.symbol, t.type, p.atomic_mass, p.melting_point_celsius, p.boiling_point_celsius FROM elements e JOIN properties p ON e.atomic_number = p.atomic_number JOIN types t ON p.type_id = t.type_id WHERE e.symbol = '$SYMBOL' OR e.symbol = INITCAP('$SYMBOL')")
   else
     # Argument is a name
     NAME=$1
@@ -27,15 +27,3 @@ else
   fi
 fi
 
-# If no result found
-if [[ -z $QUERY_RESULT ]]
-then
-  echo "I could not find that element in the database."
-  exit 0
-fi
-
-# Parse the result.
-echo "$QUERY_RESULT" | while IFS='|' read atomic_number name symbol type atomic_mass melting_point boiling_point
-do
-  echo "The element with atomic number $atomic_number is $name ($symbol). It's a $type, with a mass of $atomic_mass amu. $name has a melting point of $melting_point celsius and a boiling point of $boiling_point celsius."
-done
