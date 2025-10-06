@@ -27,3 +27,15 @@ else
   fi
 fi
 
+# If no result found
+if [[ -z $QUERY_RESULT ]]
+then
+  echo "I could not find that element in the database."
+  exit 0
+fi
+
+# Parse the result.
+echo "$QUERY_RESULT" | while IFS='|' read atomic_number name symbol type atomic_mass melting_point boiling_point
+do
+  echo "The element with atomic number $atomic_number is $name ($symbol). It's a $type, with a mass of $atomic_mass amu. $name has a melting point of $melting_point celsius and a boiling point of $boiling_point celsius."
+done
